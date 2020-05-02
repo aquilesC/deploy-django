@@ -62,6 +62,7 @@ echo "Creating WSGI interface UNIX socket file..."
 python -c "import socket as s; sock = s.socket(s.AF_UNIX); sock.bind('./run/gunicorn.sock')"
 echo "Merging the dot env environments"
 cd $DJANGOFOLDER
+export DJANGO_SETTINGS_MODULE=config.settings.production
 python merge_production_dotenvs_in_dotenv.py
 python manage.py migrate
 python manage.py collectstatic --noinput
