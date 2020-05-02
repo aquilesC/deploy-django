@@ -47,12 +47,13 @@ chown -R $APPNAME:$GROUPNAME $DJANGOFOLDER/.envs
 chmod -R 700 $DJANGOFOLDER/.envs/.production/
 
 echo "Merging the dot env environments"
+cd $DJANGOFOLDER
 python merge_production_dotenvs_in_dotenv.py
 
 echo "Creating the database"
-DBPASSWORD=$(read_var POSTGRES_PASSWORD $DJANGOFOLDER/.envs/.production/.postgres)
-DBUSER=$(read_var POSTGRES_USER $DJANGOFOLDER/.envs/.production/.postgres)
-DATABASE=$(read_var POSTGRES_DB $DJANGOFOLDER/.envs/.production/.postgres)
+DBPASSWORD=$(read_var POSTGRES_PASSWORD $DJANGOFOLDER/.env)
+DBUSER=$(read_var POSTGRES_USER $DJANGOFOLDER/.env)
+DATABASE=$(read_var POSTGRES_DB $DJANGOFOLDER/.env)
 
 # ###################################################################
 # Create the PostgreSQL database and associated role for the app
