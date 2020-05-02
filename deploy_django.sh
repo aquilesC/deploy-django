@@ -58,7 +58,7 @@ DATABASE=$(read_var POSTGRES_DB $DJANGOFOLDER/.envs/.production/.postgres)
 echo "Creating PostgreSQL role '$DBUSER'..."
 su postgres -c "createuser -S -D -R -w $DBUSER"
 echo "Changing password of database role..."
-su postgres -c "psql -c \"ALTER USER '$DBUSER' WITH PASSWORD '$DBPASSWORD';\""
+su postgres -c "psql -c \"ALTER USER $DBUSER WITH PASSWORD '$DBPASSWORD';\""
 echo "Creating PostgreSQL database '$DATABASE'..."
 su postgres -c "createdb --owner '$DBUSER' '$DATABASE'"
 
