@@ -46,6 +46,9 @@ echo "Securing the env files by making them read-only"
 chown -R $APPNAME:$GROUPNAME $DJANGOFOLDER/.envs
 chmod -R 700 $DJANGOFOLDER/.envs/.production/
 
+echo "Merging the dot env environments"
+python merge_production_dotenvs_in_dotenv.py
+
 echo "Creating the database"
 DBPASSWORD=$(read_var POSTGRES_PASSWORD $DJANGOFOLDER/.envs/.production/.postgres)
 DBUSER=$(read_var POSTGRES_USER $DJANGOFOLDER/.envs/.production/.postgres)
