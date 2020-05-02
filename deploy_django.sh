@@ -28,17 +28,6 @@ DJANGOFOLDER=/$GROUPNAME/$APPFOLDER/$APPFOLDER
 
 cd $APPFOLDERPATH
 
-echo "Activating the environment and installing dependencies"
-su -l $APPNAME << EOF
-source venv/bin/activate
-pip install -r $DJANGOFOLDER/requirements/production.txt
-echo "Creating static file folders..."
-mkdir logs nginx run static media || error_exit "Error creating static folders"
-# Create the UNIX socket file for WSGI interface
-echo "Creating WSGI interface UNIX socket file..."
-python -c "import socket as s; sock = s.socket(s.AF_UNIX); sock.bind('./run/gunicorn.sock')"
-EOF
-
 # ###################################################################
 # Let's get the important information from the .env files
 # ###################################################################
@@ -46,18 +35,10 @@ echo "Securing the env files by making them read-only"
 chown -R $APPNAME:$GROUPNAME $DJANGOFOLDER/.envs
 chmod -R 700 $DJANGOFOLDER/.envs/.production/
 
-echo "Merging the dot env environments"
-cd $DJANGOFOLDER
-
-su -l $APPNAME << EOF
-source ../venv/bin/activate
-python merge_production_dotenvs_in_dotenv.py
-EOF
-
 echo "Creating the database"
-DBPASSWORD=$(read_var POSTGRES_PASSWORD $DJANGOFOLDER/.env)
-DBUSER=$(read_var POSTGRES_USER $DJANGOFOLDER/.env)
-DATABASE=$(read_var POSTGRES_DB $DJANGOFOLDER/.env)
+DBPASSWORD=$(read_var POSTGRES_PASSWORD $DJANGOFOLDER/.envs/.production/.postgres)
+DBUSER=$(read_var POSTGRES_USER $DJANGOFOLDER/.envs/.production/.postgres)
+DATABASE=$(read_var POSTGRES_DB $DJANGOFOLDER/.envs/.production/.postgres)
 
 # ###################################################################
 # Create the PostgreSQL database and associated role for the app
@@ -70,6 +51,19 @@ su postgres -c "psql -c \"ALTER USER $DBUSER WITH PASSWORD '$DBPASSWORD';\""
 echo "Creating PostgreSQL database '$DATABASE'..."
 su postgres -c "createdb --owner '$DBUSER' '$DATABASE'"
 
+echo "Activating the environment and installing dependencies"
+su -l $APPNAME << EOF
+source venv/bin/activate
+pip install -r $DJANGOFOLDER/requirements/production.txt
+echo "Creating static file folders..."
+mkdir logs nginx run static media || error_exit "Error creating static folders"
+# Create the UNIX socket file for WSGI interface
+echo "Creating WSGI interface UNIX socket file..."
+python -c "import socket as s; sock = s.socket(s.AF_UNIX); sock.bind('./run/gunicorn.sock')"
+echo "Merging the dot env environments"
+cd $DJANGOFOLDER
+python merge_production_dotenvs_in_dotenv.py
+EOF
 
 # ###################################################################
 # Create the script that will init the virtual environment. This
