@@ -34,13 +34,13 @@ for ppkg in "${PYTHON_PREREQ[@]}"
     done
 
 echo "Configuring Supervisor"
-# Copy supervisord.conf if it does not exist
-if [ ! -f /etc/supervisord.conf ]; then
-	cp ./supervisord.conf /etc || error_exit "Error copying supervisord.conf"
-fi
-
 if [ ! -d /etc/supervisor ]; then
   mkdir /etc/supervisor || error_exit "Error creating supervisord directory"
+fi
+
+# Copy supervisord.conf if it does not exist
+if [ ! -f /etc/supervisor/supervisord.conf ]; then
+	cp ./supervisord.conf /etc/supervisor || error_exit "Error copying supervisord.conf"
 fi
 
 SUPERVISORD_ACTION='reload'
