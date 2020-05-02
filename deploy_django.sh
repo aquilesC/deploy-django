@@ -105,7 +105,7 @@ SOCKFILE=$APPFOLDERPATH/run/gunicorn.sock  # we will communicte using this unix 
 USER=$APPNAME                                        # the user to run as
 GROUP=$GROUPNAME                                     # the group to run as
 NUM_WORKERS=3                                     # how many worker processes should Gunicorn spawn
-DJANGO_WSGI_MODULE=$APPNAME.wsgi                     # WSGI module name
+DJANGO_WSGI_MODULE=$APPNAME.config.wsgi                     # WSGI module name
 
 echo "Starting $APPNAME as \`whoami\`"
 
