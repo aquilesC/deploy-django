@@ -63,7 +63,10 @@ python -c "import socket as s; sock = s.socket(s.AF_UNIX); sock.bind('./run/guni
 echo "Merging the dot env environments"
 cd $DJANGOFOLDER
 python merge_production_dotenvs_in_dotenv.py
+python manage.py migrate
+python manage.py collectstatic --noinput
 EOF
+
 
 # ###################################################################
 # Create the script that will init the virtual environment. This
