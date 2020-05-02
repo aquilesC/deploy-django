@@ -47,9 +47,9 @@ chown -R $APPNAME:$GROUPNAME $DJANGOFOLDER/.envs
 chmod -R 600 $DJANGOFOLDER/.envs/.production/*
 
 echo "Creating the database"
-DBPASSWORD = $(read_var POSTGRES_PASSWORD $DJANGODIR/.envs/.production/.postgres)
-DBUSER = $(read_var POSTGRES_USER $DJANGODIR/.envs/.production/.postgres)
-DATABASE = $(read_var POSTGRES_DB $DJANGODIR/.envs/.production/.postgres)
+DBPASSWORD = $(read_var POSTGRES_PASSWORD $DJANGOFOLDER/.envs/.production/.postgres)
+DBUSER = $(read_var POSTGRES_USER $DJANGOFOLDER/.envs/.production/.postgres)
+DATABASE = $(read_var POSTGRES_DB $DJANGOFOLDER/.envs/.production/.postgres)
 
 # ###################################################################
 # Create the PostgreSQL database and associated role for the app
