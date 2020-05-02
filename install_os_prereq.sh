@@ -43,6 +43,18 @@ if [ ! -d /etc/supervisor ]; then
   mkdir /etc/supervisor || error_exit "Error creating supervisord directory"
 fi
 
+SUPERVISORD_ACTION='reload'
+# Create supervisord init.d script that can be controlled with service
+if [ ! -f /etc/init.d/supervisord ]; then
+    echo "Setting up supervisor to autostart during bootup..."
+	cp ./supervisord /etc/init.d || error_exit "Error copying /etc/init.d/supervisord"
+	# enable execute flag on the script
+	chmod +x /etc/init.d/supervisord || error_exit "Error setting execute flag on supervisord"
+	# create the entries in runlevel folders to autostart supervisord
+	update-rc.d supervisord defaults || error_exit "Error configuring supervisord to autostart"
+    SUPERVISORD_ACTION='start'
+fi
+
 if [ ${#MISSING[@]} -ne 0 ]; then
     echo "Following required packages are missing, please install them first."
     echo ${MISSING[*]}
