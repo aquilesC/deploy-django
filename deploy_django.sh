@@ -31,7 +31,6 @@ cd $APPFOLDERPATH
 echo "Activating the environment and installing dependencies"
 su -l $APPNAME << 'EOF'
 source venv/bin/activate
-# upgrade pip
 pip install -r $DJANGOFOLDER/requirements/production.txt
 echo "Creating static file folders..."
 mkdir logs nginx run static media || error_exit "Error creating static folders"
@@ -44,8 +43,8 @@ EOF
 # Let's get the important information from the .env files
 # ###################################################################
 echo "Securing the env files by making them read-only"
-chown -R $APPNAME:$GROUPNAME $DJANGODIR/.envs
-chmod -R 600 $DJANGODIR/.envs/.production/*
+chown -R $APPNAME:$GROUPNAME $DJANGOFOLDER/.envs
+chmod -R 600 $DJANGOFOLDER/.envs/.production/*
 
 echo "Creating the database"
 DBPASSWORD = $(read_var POSTGRES_PASSWORD $DJANGODIR/.envs/.production/.postgres)
