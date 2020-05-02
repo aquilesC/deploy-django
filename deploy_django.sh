@@ -24,7 +24,7 @@ GROUPNAME=webapps
 # app folder name under /webapps/<appname>
 APPFOLDER=$1
 APPFOLDERPATH=/$GROUPNAME/$APPFOLDER
-DJANGOFOLDER==/$GROUPNAME/$APPFOLDER/$APPFOLDER
+DJANGOFOLDER=/$GROUPNAME/$APPFOLDER/$APPFOLDER
 
 cd $APPFOLDERPATH
 
@@ -32,7 +32,7 @@ echo "Activating the environment and installing dependencies"
 su -l $APPNAME << 'EOF'
 source venv/bin/activate
 # upgrade pip
-pip install -r $DJANGODIR/requirements/production.txt
+pip install -r $DJANGOFOLDER/requirements/production.txt
 echo "Creating static file folders..."
 mkdir logs nginx run static media || error_exit "Error creating static folders"
 # Create the UNIX socket file for WSGI interface
