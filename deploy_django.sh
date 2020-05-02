@@ -44,7 +44,7 @@ EOF
 # ###################################################################
 echo "Securing the env files by making them read-only"
 chown -R $APPNAME:$GROUPNAME $DJANGOFOLDER/.envs
-chmod -R 600 $DJANGOFOLDER/.envs/.production/*
+chmod -R 700 $DJANGOFOLDER/.envs/.production/
 
 echo "Creating the database"
 DBPASSWORD=$(read_var POSTGRES_PASSWORD $DJANGOFOLDER/.envs/.production/.postgres)
