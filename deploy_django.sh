@@ -14,7 +14,7 @@ DOMAINNAME=$2
 # check appname was supplied as argument
 if [ "$APPNAME" == "" ] || [ "$DOMAINNAME" == "" ]; then
 	echo "Usage:"
-	echo "  $ create_django_project_run_env <project> <domain>"
+	echo "  $ deploy_django <project> <domain>"
 	echo
 	exit 1
 fi

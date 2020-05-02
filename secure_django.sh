@@ -1,15 +1,21 @@
 #!/bin/bash
 #
 # Usage:
-#	$ deploy_django.sh <appname> <domainname> assumes django APP is in /webapps/<appname>/<appname>
+#	$ secure_django.sh <domainname>
 
 source ./common_funcs.sh
 
 check_root
 
-# conventional values that we'll use throughout the script
-APPNAME=$1
-DOMAINNAME=$2
+DOMAINNAME=$1
+
+# check appname was supplied as argument
+if [ "$DOMAINNAME" == "" ]; then
+	echo "Usage:"
+	echo "  $ secure_django <domain>"
+	echo
+	exit 1
+fi
 
 echo "Adding Certbot repository and installing certbot"
 add-apt-repository ppa:certbot/certbot
