@@ -6,9 +6,9 @@ check_root
 
 PIP="pip3"
 
-LINUX_PREREQ=('git' 'build-essential' 'python3-dev' 'python3-pip' 'nginx' 'postgresql' 'libpq-dev' 'redis-server' 'supervisor')
+LINUX_PREREQ=('git' 'build-essential' 'python3-dev' 'python3-pip' 'nginx' 'postgresql' 'libpq-dev' 'redis-server')
 
-PYTHON_PREREQ=('virtualenv' )
+PYTHON_PREREQ=('virtualenv' 'supervisor' )
 
 # Test prerequisites
 echo "Checking if required packages are installed..."
@@ -32,6 +32,16 @@ for ppkg in "${PYTHON_PREREQ[@]}"
             exit 1
         fi
     done
+
+echo "Configuring Supervisor"
+# Copy supervisord.conf if it does not exist
+if [ ! -f /etc/supervisord.conf ]; then
+	cp ./supervisord.conf /etc || error_exit "Error copying supervisord.conf"
+fi
+
+if [! -d /etc/supervisor ]; then
+  mkdir /etc/supervisor || error_exit "Error creating supervisord directory"
+fi
 
 if [ ${#MISSING[@]} -ne 0 ]; then
     echo "Following required packages are missing, please install them first."

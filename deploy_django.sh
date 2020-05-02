@@ -178,8 +178,7 @@ ln -sf $APPFOLDERPATH/nginx/$APPNAME.conf /etc/nginx/sites-enabled/$APPNAME
 # ###################################################################
 
 # Create the supervisor application conf file
-mkdir -p /etc/supervisor/conf.d/
-cat > /etc/supervisor/conf.d/$APPNAME.conf << EOF
+cat > /etc/supervisor/$APPNAME.conf << EOF
 [program:$APPNAME]
 command = $APPFOLDERPATH/gunicorn_start.sh
 user = $APPNAME
@@ -188,7 +187,6 @@ autorestart=true
 stdout_logfile = $APPFOLDERPATH/logs/gunicorn_supervisor.log
 redirect_stderr = true
 EOF
-
 
 
 # ###################################################################
