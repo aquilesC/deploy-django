@@ -207,4 +207,4 @@ echo "Reloading Nginx"
 nginx -s reload || error_exit "Error reloading nginx. Check configuration files"
 
 echo "Done!"
-echo "No proceed to secure_django.sh to deploy Let's Encrypt certificates"
+echo "Now proceed to secure_django.sh to deploy Let's Encrypt certificates"
