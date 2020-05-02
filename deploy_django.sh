@@ -48,7 +48,9 @@ chmod -R 700 $DJANGOFOLDER/.envs/.production/
 
 echo "Merging the dot env environments"
 cd $DJANGOFOLDER
+
 su -l $APPNAME << EOF
+source ../venv/bin/activate
 python merge_production_dotenvs_in_dotenv.py
 EOF
 
