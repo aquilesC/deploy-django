@@ -74,6 +74,12 @@ source venv/bin/activate
 pip install --upgrade pip || error_exist "Error upgrading pip to the latest version"
 EOF
 
+echo "Before fnishing, let's copy the SSH keys to be able to send files to the app using SSH"
+mkdir $APPFOLDERPATH/.ssh
+cp $HOME/.ssh/authorized_keys /$APPFOLDERPATH/.ssh/
+chown $APPNAME:$GROUPNAME $APPFOLDERPATH/.ssh/authorized_keys
+chmod 600 $APPFOLDERPATH/.ssh/authorized_keys
+
 echo "Done!"
 echo "Now it is time to copy the project files to $APPFOLDERPATH"
 echo "When done, continue with deploy_django.sh"
