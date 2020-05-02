@@ -33,14 +33,14 @@ mkdir -p /$GROUPNAME/$APPFOLDER || error_exit "Could not create app folder"
 getent group $GROUPNAME
 if [ $? -ne 0 ]; then
     echo "Creating group '$GROUPNAME' for automation accounts..."
-    groupadd --system $GROUPNAME || error_exit "Could not create group 'webapps'"
+    groupadd $GROUPNAME || error_exit "Could not create group 'webapps'"
 fi
 
 # create the app user account, same name as the appname
 grep "$APPNAME:" /etc/passwd
 if [ $? -ne 0 ]; then
     echo "Creating automation user account '$APPNAME'..."
-    useradd --system --gid $GROUPNAME --shell /bin/bash --home $APPFOLDERPATH $APPNAME || error_exit "Could not create automation user account '$APPNAME'"
+    useradd --gid $GROUPNAME --shell /bin/bash --home $APPFOLDERPATH $APPNAME || error_exit "Could not create automation user account '$APPNAME'"
 fi
 
 # change ownership of the app folder to the newly created user account
@@ -77,7 +77,8 @@ EOF
 echo "Before fnishing, let's copy the SSH keys to be able to send files to the app using SSH"
 mkdir $APPFOLDERPATH/.ssh
 cp $HOME/.ssh/authorized_keys /$APPFOLDERPATH/.ssh/
-chown $APPNAME:$GROUPNAME $APPFOLDERPATH/.ssh/authorized_keys
+chown -R $APPNAME:$GROUPNAME $APPFOLDERPATH/.ssh
+chmod 700 $APPFOLDERPATH/.ssh
 chmod 600 $APPFOLDERPATH/.ssh/authorized_keys
 
 echo "Done!"
