@@ -47,9 +47,9 @@ chown -R $APPNAME:$GROUPNAME $DJANGOFOLDER/.envs
 chmod -R 600 $DJANGOFOLDER/.envs/.production/*
 
 echo "Creating the database"
-DBPASSWORD = $(read_var POSTGRES_PASSWORD $DJANGOFOLDER/.envs/.production/.postgres)
-DBUSER = $(read_var POSTGRES_USER $DJANGOFOLDER/.envs/.production/.postgres)
-DATABASE = $(read_var POSTGRES_DB $DJANGOFOLDER/.envs/.production/.postgres)
+DBPASSWORD=$(read_var POSTGRES_PASSWORD $DJANGOFOLDER/.envs/.production/.postgres)
+DBUSER=$(read_var POSTGRES_USER $DJANGOFOLDER/.envs/.production/.postgres)
+DATABASE=$(read_var POSTGRES_DB $DJANGOFOLDER/.envs/.production/.postgres)
 
 # ###################################################################
 # Create the PostgreSQL database and associated role for the app
@@ -58,9 +58,9 @@ DATABASE = $(read_var POSTGRES_DB $DJANGOFOLDER/.envs/.production/.postgres)
 echo "Creating PostgreSQL role '$DBUSER'..."
 su postgres -c "createuser -S -D -R -w $DBUSER"
 echo "Changing password of database role..."
-su postgres -c "psql -c \"ALTER USER $DBUSER WITH PASSWORD '$DBPASSWORD';\""
+su postgres -c "psql -c \"ALTER USER '$DBUSER' WITH PASSWORD '$DBPASSWORD';\""
 echo "Creating PostgreSQL database '$DATABASE'..."
-su postgres -c "createdb --owner $DBUSER $DATABASE"
+su postgres -c "createdb --owner '$DBUSER' '$DATABASE'"
 
 
 # ###################################################################
@@ -177,46 +177,26 @@ ln -sf $APPFOLDERPATH/nginx/$APPNAME.conf /etc/nginx/sites-enabled/$APPNAME
 # Setup supervisor
 # ###################################################################
 
-# Copy supervisord.conf if it does not exist
-if [ ! -f /etc/supervisord.conf ]; then
-	cp ./supervisord.conf /etc || error_exit "Error copying supervisord.conf"
-fi
-
 # Create the supervisor application conf file
-mkdir -p /etc/supervisor
-cat > /etc/supervisor/$APPNAME.conf << EOF
+mkdir -p /etc/supervisor/conf.d/
+cat > /etc/supervisor/conf.d/$APPNAME.conf << EOF
 [program:$APPNAME]
 command = $APPFOLDERPATH/gunicorn_start.sh
 user = $APPNAME
+autostart=true
+autorestart=true
 stdout_logfile = $APPFOLDERPATH/logs/gunicorn_supervisor.log
 redirect_stderr = true
 EOF
 
-SUPERVISORD_ACTION='reload'
-# Create supervisord init.d script that can be controlled with service
-if [ ! -f /etc/init.d/supervisord ]; then
-    echo "Setting up supervisor to autostart during bootup..."
-	cp ./supervisord /etc/init.d || error_exit "Error copying /etc/init.d/supervisord"
-	# enable execute flag on the script
-	chmod +x /etc/init.d/supervisord || error_exit "Error setting execute flag on supervisord"
-	# create the entries in runlevel folders to autostart supervisord
-	update-rc.d supervisord defaults || error_exit "Error configuring supervisord to autostart"
-    SUPERVISORD_ACTION='start'
-fi
 
-echo "Reloading Supervisor"
+
 # ###################################################################
 # Reload/start supervisord and nginx
 # ###################################################################
-# Start/reload the supervisord daemon
-service supervisord status > /dev/null
-if [ $? -eq 0 ]; then
-    # Service is running, restart it
-    service supervisord restart || error_exit "Error restarting supervisord"
-else
-    # Service is not running, probably it's been installed first. Start it
-    service supervisord start || error_exit "Error starting supervisord"
-fi
+echo "Reloading Supervisor"
+supervisorctl reread
+supervisorctl update
 
 echo "Reloading Nginx"
 # Reload nginx so that requests to domain are redirected to the gunicorn process
