@@ -29,7 +29,7 @@ DJANGOFOLDER=/$GROUPNAME/$APPFOLDER/$APPFOLDER
 cd $APPFOLDERPATH
 
 echo "Activating the environment and installing dependencies"
-su -l $APPNAME << 'EOF'
+su -l $APPNAME << EOF
 source venv/bin/activate
 pip install -r $DJANGOFOLDER/requirements/production.txt
 echo "Creating static file folders..."
