@@ -48,7 +48,9 @@ chmod -R 700 $DJANGOFOLDER/.envs/.production/
 
 echo "Merging the dot env environments"
 cd $DJANGOFOLDER
+su -l $APPNAME << EOF
 python merge_production_dotenvs_in_dotenv.py
+EOF
 
 echo "Creating the database"
 DBPASSWORD=$(read_var POSTGRES_PASSWORD $DJANGOFOLDER/.env)
