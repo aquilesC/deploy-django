@@ -111,7 +111,7 @@ SOCKFILE=$APPFOLDERPATH/run/gunicorn.sock  # we will communicte using this unix 
 USER=$APPNAME                                        # the user to run as
 GROUP=$GROUPNAME                                     # the group to run as
 NUM_WORKERS=3                                     # how many worker processes should Gunicorn spawn
-DJANGO_WSGI_MODULE=$APPNAME.config.wsgi                     # WSGI module name
+DJANGO_WSGI_MODULE=config.wsgi                     # WSGI module name
 
 echo "Starting $APPNAME as \`whoami\`"
 
@@ -194,7 +194,6 @@ stdout_logfile = $APPFOLDERPATH/logs/gunicorn_supervisor.log
 redirect_stderr = true
 EOF
 
-
 # ###################################################################
 # Reload/start supervisord and nginx
 # ###################################################################
@@ -206,5 +205,13 @@ echo "Reloading Nginx"
 # Reload nginx so that requests to domain are redirected to the gunicorn process
 nginx -s reload || error_exit "Error reloading nginx. Check configuration files"
 
+echo "Final Touch, sourcing environment variables on BASH"
+cat > $APPFOLDERPATH/.bashrc << EOF
+source $APPFOLDERPATH//prepare_env.sh
+EOF
+
 echo "Done!"
-echo "Now proceed to secure_django.sh to deploy Let's Encrypt certificates"
+
+echo "Now we will proceed to secure the server with a Let's Encrypt certificates"
+
+certbot --nginx -d $DOMAINNAME

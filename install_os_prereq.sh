@@ -61,5 +61,14 @@ if [ ${#MISSING[@]} -ne 0 ]; then
     exit 1
 fi
 
+echo "Adding Certbot repository and installing certbot"
+add-apt-repository ppa:certbot/certbot
+apt-get update
+apt-get install python-certbot-nginx
+
+echo "Setting UFW rules to allow ssl"
+ufw allow 'Nginx Full'
+ufw delete allow 'Nginx HTTP'
+
 echo "All required packages have been installed!"
 
